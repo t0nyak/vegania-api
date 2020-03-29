@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-export const db = Sequelize('vegania-db', 't0nyak', 'v3g4n1a-t0nyak-DB', {
+export const db = new Sequelize('vegania-db', 't0nyak', 'v3g4n1a-t0nyak-DB', {
   host: 'localhost',
   dialect: 'postgres',
   pool: {
