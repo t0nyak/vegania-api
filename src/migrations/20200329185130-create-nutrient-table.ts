@@ -4,7 +4,7 @@ const uuid = require('uuid/v4');
 
 export default {
   up: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
-    return await queryInterface.createTable('foods', {
+    return await queryInterface.createTable('nutrients', {
       id: {
         primaryKey: true,
         allowNull: false,
@@ -17,6 +17,6 @@ export default {
   },
 
   down: async (queryInterface: QueryInterface, Sequelize: Sequelize) => {
-    return await queryInterface.dropTable('foods');
+    return await queryInterface.dropTable('nutrients');
   }
 };

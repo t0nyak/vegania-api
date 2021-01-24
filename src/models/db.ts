@@ -1,8 +1,14 @@
-const Sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
+import { Sequelize } from 'sequelize-typescript';
 
-export const db = new Sequelize('vegania-db', 't0nyak', 'v3g4n1a-t0nyak-DB', {
+export const db = new Sequelize({
   host: 'localhost',
+  database: 'vegania-db',
+  username: 't0nyak',
+  password: 'v3g4n1a-t0nyak-DB',
   dialect: 'postgres',
+  storage: ':memory:',
+  models: [__dirname + '/models'],
   pool: {
     max: 5,
     min: 0,

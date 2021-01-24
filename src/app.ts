@@ -1,37 +1,69 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application } from 'express';
+import morgan from 'morgan';
 
-const app: Application = express();
+// Import routes
+import recipeRoutes from './routes/recipes';
 
-app.use(express.json());
+// Import middlewares
+import notFoundMiddleware from './middlewares/not-found-middleware';
+import errorMiddleware from './middlewares/error-middleware';
 
-app.get('/', (req: Request, res: Response): object => {
-  return res.json({
-    status: 'success',
-    message: 'Welcome to Vegania API Rest'
-  });
-});
+class App {
+  public app: Application;
+  public port: number;
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const error = new Error('Route not found');
-  next(error);
-});
+  constructor(controllers, port) {
+    this.app = express();
+    this.port = port;
 
-app.use(
-  (
-    error: { message: string; status: number },
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    res.status(error.status || 500);
-    res.json({
-      status: 'error',
-      message: error.message
-    });
-    next();
+    this.initializeMiddlewaresPreControllers();
+    this.initializeControllers(controllers);
+    this.initializeMiddlewaresPostControllers();
   }
-);
+
+  private initializeMiddlewaresPreControllers() {
+    this.app.use(express.json());
+    this.app.use(morgan('dev'));
+  }
+
+  private initializeMiddlewaresPostControllers() {
+    this.app.use(notFoundMiddleware);
+    this.app.use(errorMiddleware);
+  }
+
+  private initializeControllers(controllers) {
+    controllers.forEach((controller) => {
+      this.app.use('/', controller.router);
+    });
+  }
+
+  public listen() {
+    this.app.listen(this.port, () => {
+      console.log(`Vegania API Rest listening in ${this.port}`);
+    });
+  }
+}
+
+// const app: Application = express();
+
+//app.use(express.json());
+
+// app.get('/', (req: Request, res: Response): object => {
+//   return res.json({
+//     status: 'success',
+//     message: 'Welcome to Vegania API Rest',
+//   });
+// });
+
+//app.use('/recipes', recipeRoutes);
+
+// Middlewares
+// app.use(loggerMiddleware);
+// app.use(notFoundMiddleware);
+// app.use(errorMiddleware);
 
 const PORT: any = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log(`Vegania API Rest listening in ${PORT}`));
+//app.listen(PORT, () => console.log(`Vegania API Rest listening in ${PORT}`));
+
+export default App;
